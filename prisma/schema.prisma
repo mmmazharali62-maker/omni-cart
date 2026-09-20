@@ -231,6 +231,23 @@ model TrackingEvent {
   occurredAt DateTime
 }
 
+// Admin-defined markup rules consumed by src/lib/pricing-engine.ts (spec section 10).
+model PricingRule {
+  id           String   @id @default(cuid())
+  name         String
+  type         String   // fixed_markup | percentage_markup
+  value        Decimal
+  minProfit    Decimal?
+  maxPrice     Decimal?
+  roundTo      String?  // "0.99" | "0.95" | null
+  categoryId   String?  // category-specific rule when set
+  supplierId   String?  // supplier-specific rule when set
+  priority     Int      @default(0) // higher wins within same scope
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Coupon {
   id             String    @id @default(cuid())
   code           String    @unique
