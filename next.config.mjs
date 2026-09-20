@@ -2,12 +2,27 @@
 const nextConfig = {
   images: {
     remotePatterns: [
+      // Supplier product images come from CJ/AliExpress CDNs once imports run.
+      { protocol: "https", hostname: "**.aliexpresscdn.com" },
       { protocol: "https", hostname: "**.cjdropshipping.com" },
-      { protocol: "https", hostname: "**.alicdn.com" },
-      { protocol: "https", hostname: "**.media-amazon.com" },
-      { protocol: "https", hostname: "**" }
+      { protocol: "https", hostname: "img.ltwebstatic.com" },
+      { protocol: "https", hostname: "**.alicdn.com" }
     ]
   },
-  experimental: { serverActions: { bodySizeLimit: "5mb" } }
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" }
+        ]
+      }
+    ];
+  }
 };
+
 export default nextConfig;

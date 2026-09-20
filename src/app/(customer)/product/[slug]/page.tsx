@@ -7,7 +7,7 @@ import { formatMoney } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { RecentlyViewedTracker } from "@/components/product/recently-viewed";
 import { WishlistButton } from "@/components/product/wishlist-button";
-import { AddToCartButtons } from "@/components/product/add-to-cart";
+import { BuyPanel } from "@/components/product/buy-panel";
 
 // Product detail page (spec section 3).
 export default async function ProductPage({ params }: { params: { slug: string } }) {
