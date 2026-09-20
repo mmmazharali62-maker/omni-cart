@@ -18,7 +18,10 @@ export default async function AdminProductsPage() {
     <section>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Products</h1>
-        <Link href="/admin/products/import"><Button variant="primary">Import Product</Button></Link>
+        <div className="flex gap-3">
+          <Link href="/admin/products/import"><Button variant="glass">Import</Button></Link>
+          <Link href="/admin/products/new"><Button variant="primary">New Product</Button></Link>
+        </div>
       </div>
       <GlassPanel>
         {products.length === 0 ? (
