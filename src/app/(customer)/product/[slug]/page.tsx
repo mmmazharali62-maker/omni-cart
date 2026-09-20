@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FeaturedProductsSection } from "@/components/home/featured-products";
 import { formatMoney } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import { RecentlyViewedTracker } from "@/components/product/recently-viewed";
 
 // Product detail page (spec section 3).
 export default async function ProductPage({ params }: { params: { slug: string } }) {
@@ -35,6 +36,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   return (
     <>
+      <RecentlyViewedTracker productId={product.id} />
       <section className="mx-4 mt-8 grid md:grid-cols-2 gap-8">
         <GlassPanel className="overflow-hidden p-0">
           <div className="relative aspect-square">
