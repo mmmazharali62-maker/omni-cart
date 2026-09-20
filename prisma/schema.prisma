@@ -1,0 +1,314 @@
+// Omni Cart database schema.
+// Covers: Users, Customers, Products, Variants, Categories, Inventory,
+// Suppliers, SupplierProducts, Orders, OrderItems, Payments, Shipments,
+// Tracking, Coupons, Reviews, Addresses, Notifications, Webhooks, AuditLogs.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  STORE_MANAGER
+  SUPPORT
+  OPERATIONS
+  FULFILLMENT_MANAGER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  FULFILLED
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  FAILED
+}
+
+enum SupplierName {
+  CJ_DROPSHIPPING
+  ALIEXPRESS
+  AMAZON
+}
+
+enum TrackingStatus {
+  LABEL_CREATED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  EXCEPTION
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  passwordHash  String?
+  role          Role      @default(CUSTOMER)
+  addresses     Address[]
+  orders        Order[]
+  reviews       Review[]
+  wishlist      WishlistItem[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  fullName   String
+  line1      String
+  line2      String?
+  city       String
+  state      String?
+  postalCode String
+  country    String
+  phone      String?
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+  products Product[]
+  seo      SeoMeta?
+}
+
+model Product {
+  id             String            @id @default(cuid())
+  title          String
+  slug           String            @unique
+  description    String
+  categoryId     String?
+  category       Category?         @relation(fields: [categoryId], references: [id])
+  images         String[]
+  video          String?
+  basePrice      Decimal
+  salePrice      Decimal?
+  currency       String            @default("USD")
+  status         String            @default("draft") // draft | active | archived | out_of_stock
+  variants       ProductVariant[]
+  supplierLinks  SupplierProduct[]
+  reviews        Review[]
+  seo            SeoMeta?
+  wishlistedBy   WishlistItem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model ProductVariant {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  sku        String   @unique
+  options    Json // { color: "black", size: "M" }
+  price      Decimal
+  stock      Int      @default(0)
+  weightKg   Decimal?
+  inventory  Inventory?
+}
+
+model Inventory {
+  id         String         @id @default(cuid())
+  variantId  String         @unique
+  variant    ProductVariant @relation(fields: [variantId], references: [id])
+  quantity   Int            @default(0)
+  reserved   Int            @default(0)
+  updatedAt  DateTime       @updatedAt
+}
+
+model Supplier {
+  id            String            @id @default(cuid())
+  name          SupplierName
+  displayName   String
+  isActive      Boolean           @default(true)
+  credentialRef String? // reference to secret in env/secret manager, never the raw key
+  products      SupplierProduct[]
+  createdAt     DateTime          @default(now())
+}
+
+model SupplierProduct {
+  id               String    @id @default(cuid())
+  supplierId       String
+  supplier         Supplier  @relation(fields: [supplierId], references: [id])
+  productId        String
+  product          Product   @relation(fields: [productId], references: [id])
+  supplierSku      String
+  supplierProductId String
+  cost             Decimal
+  lastSyncedAt     DateTime?
+  syncStatus       String    @default("ok") // ok | failed | pending
+
+  @@unique([supplierId, supplierProductId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id])
+  guestEmail      String?
+  status          OrderStatus   @default(PENDING)
+  items           OrderItem[]
+  subtotal        Decimal
+  discountTotal   Decimal       @default(0)
+  shippingTotal   Decimal       @default(0)
+  taxTotal        Decimal       @default(0)
+  grandTotal      Decimal
+  currency        String        @default("USD")
+  shippingAddress Json
+  billingAddress  Json
+  couponCode      String?
+  payment         Payment?
+  shipments       Shipment[]
+  auditLogs       AuditLog[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id])
+  productId   String
+  variantId   String?
+  title       String
+  sku         String
+  quantity    Int
+  unitPrice   Decimal
+  supplierId  String?
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  order           Order    @relation(fields: [orderId], references: [id])
+  provider        String   @default("stripe")
+  providerRefId   String?
+  status          String // pending | succeeded | failed | refunded | partially_refunded
+  amount          Decimal
+  currency        String   @default("USD")
+  createdAt       DateTime @default(now())
+}
+
+model Shipment {
+  id             String          @id @default(cuid())
+  orderId        String
+  order          Order           @relation(fields: [orderId], references: [id])
+  supplierOrderId String?
+  carrier        String?
+  trackingNumber String?
+  status         TrackingStatus  @default(LABEL_CREATED)
+  events         TrackingEvent[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model TrackingEvent {
+  id         String         @id @default(cuid())
+  shipmentId String
+  shipment   Shipment       @relation(fields: [shipmentId], references: [id])
+  status     TrackingStatus
+  location   String?
+  occurredAt DateTime
+}
+
+model Coupon {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  type           String // percentage | fixed | free_shipping
+  value          Decimal?
+  minOrderAmount Decimal?
+  startsAt       DateTime?
+  endsAt         DateTime?
+  usageLimit     Int?
+  timesUsed      Int       @default(0)
+  isActive       Boolean   @default(true)
+}
+
+model Review {
+  id                 String   @id @default(cuid())
+  productId          String
+  product            Product  @relation(fields: [productId], references: [id])
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  rating             Int
+  title              String?
+  body               String?
+  images             String[]
+  isVerifiedPurchase Boolean  @default(false)
+  createdAt          DateTime @default(now())
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String // order_received | payment_success | shipped | delivered | admin_alert ...
+  channel   String // email | sms | push | in_app
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model WebhookEvent {
+  id            String   @id @default(cuid())
+  source        String // stripe | cj_dropshipping | aliexpress | amazon
+  eventType     String
+  externalId    String   @unique // idempotency key
+  payload       Json
+  processedAt   DateTime?
+  status        String   @default("received") // received | processed | failed
+  createdAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  orderId   String?
+  order     Order?   @relation(fields: [orderId], references: [id])
+  action    String
+  meta      Json?
+  createdAt DateTime @default(now())
+}
+
+model SeoMeta {
+  id              String    @id @default(cuid())
+  productId       String?   @unique
+  product         Product?  @relation(fields: [productId], references: [id])
+  categoryId      String?   @unique
+  category        Category? @relation(fields: [categoryId], references: [id])
+  title           String?
+  metaDescription String?
+  structuredData  Json?
+}

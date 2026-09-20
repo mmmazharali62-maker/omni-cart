@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-deep: #0b0e17;
+  --bg-deep-2: #131a2b;
+}
+
+body {
+  color: #f5f7ff;
+  background: radial-gradient(circle at 20% -10%, #24325c 0%, var(--bg-deep) 45%, #05060a 100%);
+  min-height: 100vh;
+}
+
+/* Liquid Glass base surface, reused by navbar, cards, modals, drawers. */
+.glass {
+  background: var(--tw-glass-bg, rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+}
+
+.glass-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.glass-hover:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+}
