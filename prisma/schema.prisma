@@ -322,6 +322,21 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
+// Integration credentials (spec section 17): stored encrypted at rest.
+// Lets the owner enable each provider later from the admin UI without a redeploy.
+model IntegrationSetting {
+  id             String    @id @default(cuid())
+  provider       String    @unique
+  keys           Json      // { fieldName: encryptedValue }
+  isActive       Boolean   @default(true)
+  lastTestedAt   DateTime?
+  lastTestStatus String? // ok | fail
+  lastTestMessage String?
+  updatedBy      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
 model SeoMeta {
   id              String    @id @default(cuid())
   productId       String?   @unique

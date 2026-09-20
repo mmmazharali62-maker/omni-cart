@@ -13,6 +13,7 @@ const links = [
   ["Pricing", "/admin/pricing"],
   ["Analytics", "/admin/analytics"],
   ["Settings", "/admin/settings"],
+  ["Integrations", "/admin/integrations"],
   ["Audit Log", "/admin/audit"],
   ["Support", "/admin/support"]
 ];
