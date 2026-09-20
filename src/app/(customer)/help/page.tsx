@@ -1,4 +1,5 @@
 import { GlassPanel } from "@/components/ui/glass-panel";
+import { GuestOrderLookup } from "@/components/account/guest-order-lookup";
 
 const faqs = [
   ["Where do you ship?", "We currently ship across the USA and UK. Delivery estimates are shown on each product page."],
@@ -21,6 +22,10 @@ export default function HelpPage() {
           </GlassPanel>
         ))}
       </div>
+      <GlassPanel className="mt-8">
+        <p className="font-medium mb-4">Track an order without an account</p>
+        <GuestOrderLookup />
+      </GlassPanel>
       <p className="text-white/40 text-xs mt-8">
         Still stuck? Email support@omnicart.example.com (placeholder until the support inbox is provisioned).
       </p>

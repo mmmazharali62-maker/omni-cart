@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/hero";
 import { FeaturedProductsSection } from "@/components/home/featured-products";
 import { db } from "@/lib/db";
+import { RecentlyViewedRail } from "@/components/home/recently-viewed-rail";
 
 // Homepage (spec section 1): hero, featured/trending/new-arrival/best-seller rails.
 // Product fetching is intentionally simple for now - swap in real "trending"/
@@ -31,6 +32,7 @@ export default async function HomePage() {
       <FeaturedProductsSection title="New Arrivals" products={[]} />
       <FeaturedProductsSection title="Flash Deals" products={[]} />
       <FeaturedProductsSection title="Best Sellers" products={[]} />
+      <RecentlyViewedRail />
     </>
   );
 }
