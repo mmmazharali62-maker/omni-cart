@@ -1,28 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { getSupplierConnector } from "@/lib/suppliers";
 import { resolvePricingRule, calculateSellingPrice } from "@/lib/pricing-engine";
+import { supplierImportSchema } from "@/lib/validation";
+import { rateLimit, clientKey } from "@/lib/rate-limit";
+import { apiError } from "@/lib/api-error";
+import { db } from "@/lib/db";
 
 // One-click import (spec section 8): admin selects a CJ Dropshipping product,
 // this fetches full details and creates it in the Omni Cart catalog.
 export async function POST(req: NextRequest) {
-  const { supplierProductId } = await req.json();
-  if (!supplierProductId) {
-    return NextResponse.json({ error: "supplierProductId is required" }, { status: 400 });
+  const rl = rateLimit(clientKey(req, "import"), 20, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many import requests" }, { status: 429 });
   }
 
+  let body: unknown;
   try {
+    body = await req.json();
+    const { supplierProductId } = supplierImportSchema.parse(body);
+
     const connector = getSupplierConnector("CJ_DROPSHIPPING");
     const payload = await connector.fetchProduct(supplierProductId);
     const rule = resolvePricingRule([], {});
     const sellingPrice = calculateSellingPrice(payload.cost, rule);
 
-    // TODO once DB is provisioned: db.$transaction to create/find Supplier,
-    // create Product + ProductVariant rows + SupplierProduct link with payload data,
-    // slugify payload.title, and set basePrice = sellingPrice.
+    // TODO once DB is provisioned: db.$transaction to find/create Supplier row,
+    // create Product + ProductVariant rows + SupplierProduct link from payload,
+    // slugify payload.title, set basePrice = sellingPrice, images = payload.images.
 
     return NextResponse.json({ imported: true, title: payload.title, sellingPrice });
   } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 502 });
+    return apiError(err);
   }
 }

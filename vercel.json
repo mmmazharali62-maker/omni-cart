@@ -1,0 +1,8 @@
+{
+  "crons": [
+    { "path": "/api/suppliers/cj/sync", "schedule": "0 */6 * * *" },
+    { "path": "/api/suppliers/aliexpress/sync", "schedule": "15 */6 * * *" },
+    { "path": "/api/jobs/tracking-update", "schedule": "*/30 * * * *" },
+    { "path": "/api/jobs/order-retry", "schedule": "0 * * * *" }
+  ]
+}
