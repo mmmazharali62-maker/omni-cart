@@ -59,8 +59,12 @@ legally/contractually supported).
 - [x] Admin product create form + CRUD APIs (soft-archive delete)
 - [x] Coupon management (percentage/fixed/free-ship, limits, windows)
 - [x] Deals / New Arrivals / Best Sellers / Inventory pages wired to real data
-- [ ] Pricing-rule editor UI (engine is live + tested)
+- [x] Pricing-rule editor UI + persistence (Prisma PricingRule, CRUD API)
+- [x] Order-retry job (max 3 spaced retries, audit-counted)
+- [x] Admin settings (integration status, role matrix) + customers page (LTV)
 - [ ] E2E tests + responsive polish
+- [ ] Category/variant pickers in admin forms (currently free-text IDs)
+- [ ] Review moderation queue UI
 
 ## What's intentionally still a TODO
 
