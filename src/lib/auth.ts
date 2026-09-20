@@ -1,10 +1,10 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 // NextAuth config (spec section 17/18: authentication + role-based permissions).
-// TODO: add real password hashing/verification (e.g. bcrypt) and consider adding
-// an OAuth provider (Google) for faster customer signup.
+Password verification via bcrypt (12-round hashes set at registration).
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   providers: [
@@ -14,8 +14,9 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email) return null;
         const user = await db.user.findUnique({ where: { email: credentials.email } });
-        if (!user) return null;
-        // TODO: verify credentials.password against user.passwordHash.
+        if (!user || !user.passwordHash) return null;
+        const ok = await bcrypt.compare(credentials.password, user.passwordHash);
+        if (!ok) return null;
         return { id: user.id, email: user.email, name: user.name ?? undefined, role: user.role } as any;
       }
     })
