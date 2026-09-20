@@ -322,6 +322,21 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
+// Return requests (spec section 29): 30-day policy, admin-approved.
+model ReturnRequest {
+  id           String   @id @default(cuid())
+  orderId      String
+  userId       String?
+  email        String
+  items        Json     // [{ orderItemId, title, quantity, price }]
+  reason       String
+  status       String   @default("requested") // requested|approved|received|refunded|rejected
+  refundAmount Decimal? @db.Decimal(10, 2)
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 // Integration credentials (spec section 17): stored encrypted at rest.
 // Lets the owner enable each provider later from the admin UI without a redeploy.
 model IntegrationSetting {
