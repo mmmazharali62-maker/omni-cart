@@ -37,6 +37,28 @@ legally/contractually supported).
 - AI layer stubs: product content cleanup, recommendations, natural-language
   search, admin assistant.
 
+## Build progress (updated continuously)
+
+- [x] Architecture + folder structure (all 30+ spec sections mapped)
+- [x] Prisma schema (19 entities) + seed data
+- [x] Liquid Glass design system + homepage + product page + cart UI
+- [x] Shop/search/categories/wishlist/account pages wired to real data
+- [x] Order state machine + fulfillment pipeline (duplicate protection)
+- [x] Cart totals engine (discount/shipping/tax/free-shipping progress) + guest cart
+- [x] Coupon validation + checkout API (Stripe Checkout Session)
+- [x] Stripe/CJ/AliExpress webhooks with idempotency
+- [x] Security: zod validation, rate limiting, role-gated admin middleware, audit logs
+- [x] Background jobs + Vercel cron (sync/tracking/retry) secured with CRON_SECRET
+- [x] Admin dashboard: live stats + charts; orders/products/suppliers management
+- [x] SEO: sitemap, robots, schema.org structured data
+- [ ] Auth UI (sign-in/sign-up pages) - NextAuth backend is ready
+- [ ] Real supplier API calls (needs CJ/AliExpress credentials + app approval)
+- [ ] Real payment + refund execution (needs Stripe keys)
+- [ ] Email/SMS provider connection (templates ready)
+- [ ] AI provider connection (stubs ready)
+- [ ] Product create/edit + bulk import UI in admin
+- [ ] E2E tests + responsive polish
+
 ## What's intentionally still a TODO
 
 This is a large, production-grade platform (spec calls for 30+ feature areas).
