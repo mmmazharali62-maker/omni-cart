@@ -13,7 +13,8 @@ const links = [
   ["Pricing", "/admin/pricing"],
   ["Analytics", "/admin/analytics"],
   ["Settings", "/admin/settings"],
-  ["Audit Log", "/admin/audit"]
+  ["Audit Log", "/admin/audit"],
+  ["Support", "/admin/support"]
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
