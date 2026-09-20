@@ -64,7 +64,11 @@ legally/contractually supported).
 - [x] Admin settings (integration status, role matrix) + customers page (LTV)
 - [ ] E2E tests + responsive polish
 - [ ] Category/variant pickers in admin forms (currently free-text IDs)
-- [ ] Review moderation queue UI
+- [x] Review moderation queue (approve/hide/delete, audit-logged)
+- [x] Category API + dropdown picker with inline creation
+- [x] Recently-viewed product tracking
+- [x] GitHub Actions CI (prisma generate + vitest)
+- [ ] Full variant management UI in admin (variants via import only for now)
 
 ## What's intentionally still a TODO
 
