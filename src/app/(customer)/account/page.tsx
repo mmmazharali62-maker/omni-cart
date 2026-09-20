@@ -16,7 +16,7 @@ export default async function AccountPage() {
         db.wishlistItem.count({ where: { userId } }),
         db.review.count({ where: { userId } }),
         db.order.findFirst({ where: { userId }, orderBy: { createdAt: "desc" } }),
-        db.order.aggregate({ _sum: { grandTotal: true }, where: { userId, status: { not: ["PENDING", "FAILED", "CANCELLED"] } } })
+        db.order.aggregate({ _sum: { grandTotal: true }, where: { userId, status: { notIn: ["PENDING", "FAILED", "CANCELLED"] } } })
       ]).catch(() => [0, 0, 0, null, null as any])
     : [0, 0, 0, null, null];
 

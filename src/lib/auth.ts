@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 // NextAuth config (spec section 17/18: authentication + role-based permissions).
-Password verification via bcrypt (12-round hashes set at registration).
+// Password verification via bcrypt (12-round hashes set at registration).
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   providers: [

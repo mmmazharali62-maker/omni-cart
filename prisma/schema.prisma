@@ -259,6 +259,7 @@ model Coupon {
   usageLimit     Int?
   timesUsed      Int       @default(0)
   isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
 }
 
 model Review {
@@ -272,6 +273,8 @@ model Review {
   body               String?
   images             String[]
   isVerifiedPurchase Boolean  @default(false)
+  isModerated        Boolean  @default(false)
+  isHidden           Boolean  @default(false)
   createdAt          DateTime @default(now())
 }
 
@@ -328,6 +331,17 @@ model SeoMeta {
   title           String?
   metaDescription String?
   structuredData  Json?
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  userId    String?
+  orderId   String?
+  subject   String
+  body      String
+  status    String   @default("open") // open | pending | resolved | closed
+  priority   String   @default("normal") // low | normal | high
+  createdAt DateTime @default(now())
 }
 
 model NewsletterSubscriber {

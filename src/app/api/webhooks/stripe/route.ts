@@ -11,7 +11,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 async function transitionOrder(orderId: string, to: OrderState) {
-  const order = await db.order.findUnique({ where: { id: orderId } });
+  const order = await db.order.findUnique({ include: { user: { select: { email: true } } }, where: { id: orderId } });
   if (!order || !canTransition(order.status as OrderState, to)) return false;
   await db.order.update({ where: { id: orderId }, data: { status: to } });
   await db.auditLog.create({
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         where: { orderId },
         data: { status: "succeeded", providerRefId: session.payment_intent as string | undefined ?? null }
       }).catch(() => {}); // payment row may not exist in test/dev flows
-      const order = await db.order.findUnique({ where: { id: orderId } });
+      const order = await db.order.findUnique({ include: { user: { select: { email: true } } }, where: { id: orderId } });
       await sendEmailNotification("payment_successful", order?.user?.email ?? order?.guestEmail ?? "", { orderId });
       // Fulfillment kickoff happens in the background job (src/lib/orders/fulfillment.ts).
     }

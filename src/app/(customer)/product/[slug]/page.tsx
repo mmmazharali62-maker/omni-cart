@@ -82,7 +82,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <div className="mt-4 flex items-center gap-3">
               <span className="text-3xl font-semibold">{formatMoney(price, product.currency)}</span>
               {product.salePrice && (
-                <span className="text-white/40 line-through">{formatMoney(product.basePrice, product.currency)}</span>
+                <span className="text-white/40 line-through">{formatMoney(Number(product.basePrice), product.currency)}</span>
               )}
             </div>
             <p className="mt-2 text-sm text-white/60">
@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
                     {Object.entries((v.options ?? {}) as Record<string, string>)
                       .map(([k, val]) => `${k}: ${val}`)
                       .join(" · ")}{" "}
-                    — {formatMoney(v.price, product.currency)} ({v.stock} in stock)
+                    — {formatMoney(Number(v.price), product.currency)} ({v.stock} in stock)
                   </li>
                 ))}
               </ul>

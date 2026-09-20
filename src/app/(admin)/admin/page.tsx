@@ -1,5 +1,5 @@
 import { GlassPanel } from "@/components/ui/glass-panel";
-import { getDashboardStats, getDailySalesSeries } from "@/lib/analytics";
+import { getDashboardStats, getDailySalesSeries, getTopProducts } from "@/lib/analytics";
 import { formatMoney } from "@/lib/utils";
 import { AdminSalesChart, AdminTopProducts } from "@/components/admin/charts";
 

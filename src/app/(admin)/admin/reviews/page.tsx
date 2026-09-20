@@ -10,7 +10,7 @@ export default async function AdminReviewsPage() {
       where: { isModerated: false },
       orderBy: { createdAt: "desc" },
       take: 50,
-      include: { product: { select: { title: true, slug: true } }, user: { select: { name: true, email: true } } }
+      include: { user: { select: { name: true, email: true } }, product: { select: { title: true, slug: true } } }
     })
     .catch(() => []);
 

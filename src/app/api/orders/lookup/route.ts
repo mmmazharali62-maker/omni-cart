@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     if (!rl.allowed) return NextResponse.json({ error: "Too many lookups" }, { status: 429 });
 
     const { orderId, email } = lookupSchema.parse(await req.json());
-    const order = await db.order.findUnique({ where: { id: orderId } });
+    const order = await db.order.findUnique({ where: { id: orderId }, include: { user: { select: { email: true } } } });
     if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
     const emailMatch =

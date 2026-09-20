@@ -8,7 +8,7 @@ export default async function AdminSupportPage() {
     .findMany({
       orderBy: { createdAt: "desc" },
       take: 100,
-      include: { user: { select: { email: true } }, order: { select: { id: true, status: true } } }
+
     })
     .catch(() => []);
 
@@ -34,9 +34,9 @@ export default async function AdminSupportPage() {
                     <p className="truncate">{t.subject}</p>
                     <p className="text-xs text-white/40 truncate">{t.body}</p>
                   </td>
-                  <td className="text-white/70">{t.user?.email ?? "guest"}</td>
+                  <td className="text-white/70">{t.userId ? "registered" : "guest"}</td>
                   <td className="font-mono text-xs">
-                    {t.orderId ? <Link href={`/admin/orders`} className="text-brand-400">{t.orderId.slice(0, 8)}</Link> : "—"}
+                    {t.orderId ? <Link href="/admin/orders" className="text-brand-400">{t.orderId.slice(0, 8)}</Link> : "—"}
                   </td>
                   <td>
                     <span className={`px-2 py-1 rounded-full text-xs ${t.status === "open" ? "bg-amber-500/20 text-amber-300" : "bg-white/10 text-white/50"}`}>

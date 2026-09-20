@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: "Forbidden for your role" }, { status: 403 });
     }
 
-    const order = await db.order.findUnique({ where: { id: params.id } });
+    const order = await db.order.findUnique({ where: { id: params.id }, include: { user: { select: { email: true } } } });
     if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
     let to: OrderState;
