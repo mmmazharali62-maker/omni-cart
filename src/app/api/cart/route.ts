@@ -5,8 +5,11 @@ import { computeCartTotals } from "@/lib/cart/totals";
 import { addToCartSchema } from "@/lib/validation";
 import { apiError } from "@/lib/api-error";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
+import { z } from "zod";
 
 // Smart Cart API (spec section 4): guest cookie cart; totals recomputed from DB.
+const modifySchema = addToCartSchema.extend({ replace: z.boolean().optional() });
+
 export async function GET(req: NextRequest) {
   try {
     const cart = readGuestCart(req);
@@ -19,29 +22,32 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const rl = rateLimit(clientKey(req, "cart"), 60, 60_000);
+    const rl = rateLimit(clientKey(req, "cart"), 120, 60_000);
     if (!rl.allowed) return NextResponse.json({ error: "Slow down a bit" }, { status: 429 });
 
     const body = await req.json();
-    const { variantId, quantity } = addToCartSchema.parse(body);
+    const { variantId, quantity, replace } = modifySchema.parse(body);
 
-    // Stock check before accepting.
     const variant = await db.productVariant.findUnique({ where: { id: variantId }, include: { product: true } });
     if (!variant || variant.product.status !== "active") {
       return NextResponse.json({ error: "Product unavailable" }, { status: 404 });
     }
-    if (variant.stock < quantity) {
-      return NextResponse.json({ error: `Only ${variant.stock} in stock` }, { status: 409 });
-    }
 
     const cart = readGuestCart(req);
     const existing = cart.lines.find((l) => l.variantId === variantId);
-    if (existing) existing.quantity = Math.min(99, existing.quantity + quantity);
+    const newQty = existing
+      ? Math.min(99, replace ? quantity : existing.quantity + quantity)
+      : quantity;
+
+    if (variant.stock < newQty) {
+      return NextResponse.json({ error: `Only ${variant.stock} in stock` }, { status: 409 });
+    }
+
+    if (existing) existing.quantity = newQty;
     else cart.lines.push({ variantId, quantity });
 
     const hydrated = await hydrate(cart);
-    const res = NextResponse.json(hydrated);
-    return writeGuestCart(cart, res);
+    return writeGuestCart(cart, NextResponse.json(hydrated));
   } catch (err) {
     return apiError(err);
   }
@@ -72,16 +78,13 @@ async function hydrate(cart: { lines: Array<{ variantId: string; quantity: numbe
     .filter((l) => byId.has(l.variantId))
     .map((l) => {
       const v = byId.get(l.variantId)!;
-      const unit = Number(v.product.salePrice ?? 0) || v.price.toNumber();
-      // NOTE: salePrice lives on Product; variant price is the authoritative unit price fallback.
-      const finalUnit = v.price.toNumber();
       return {
         variantId: l.variantId,
         productId: v.product.id,
         title: v.product.title,
         slug: v.product.slug,
         sku: v.sku,
-        unitPrice: finalUnit,
+        unitPrice: v.price.toNumber(),
         quantity: Math.min(l.quantity, Math.max(1, v.stock))
       };
     });
