@@ -10,13 +10,24 @@ import { WishlistButton } from "@/components/product/wishlist-button";
 import { BuyPanel } from "@/components/product/buy-panel";
 import { ImageGallery } from "@/components/product/image-gallery";
 import { RelatedProducts } from "@/components/product/related-products";
+import { ReviewForm } from "@/components/product/review-form";
 
 // Product detail page (spec section 3).
 export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = await db.product
+  const [product, publicReviews] = await Promise.all([
+    db.product
+
     .findUnique({
       where: { slug: params.slug },
+      .findUnique({
+      where: { slug: slug },
       include: { variants: true, reviews: true, category: true, supplierLinks: { include: { supplier: true } } }
+    }).catch(() => null),
+    db.review
+      .findMany({ where: { productId: undefined, isModerated: true, isHidden: false } })
+      .catch(() => [])
+  ]);
+  if (!product) notFound();
     })
     .catch(() => null);
 
@@ -31,8 +42,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
     .catch(() => []);
 
   const avgRating =
-    product.reviews.length > 0
-      ? product.reviews.reduce((s, r) => s + r.rating, 0) / product.reviews.length
+    publicReviews.length > 0
+      ? publicReviews.reduce((s, r) => s + r.rating, 0) / publicReviews.length
       : null;
 
   const totalStock = product.variants.reduce((s, v) => s + v.stock, 0);
@@ -57,7 +68,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <h1 className="text-2xl font-semibold">{product.title}</h1>
             <div className="mt-2 flex items-center gap-3 text-sm text-white/70">
               {avgRating != null ? (
-                <span>{"★".repeat(Math.round(avgRating))} {avgRating.toFixed(1)} ({product.reviews.length} reviews)</span>
+                <span>{"★".repeat(Math.round(avgRating))} {avgRating.toFixed(1)} ({publicReviews.length} reviews)</span>
               ) : (
                 <span>No reviews yet</span>
               )}
@@ -110,12 +121,12 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
       <section className="mx-4 mt-8">
         <GlassPanel>
-          <h2 className="text-lg font-semibold mb-4">Reviews</h2>
-          {product.reviews.length === 0 ? (
+          <h2 className="text-lg font-semibold mb-4">Reviews <span className="float-right"><ReviewForm productId={product.id} /></span></h2>
+          {publicReviews.length === 0 ? (
             <p className="text-white/50 text-sm">No reviews yet.</p>
           ) : (
             <ul className="space-y-4">
-              {product.reviews.map((r) => (
+              {publicReviews.map((r) => (
                 <li key={r.id} className="border-b border-white/10 pb-4 last:border-0">
                   <p className="text-sm">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</p>
                   {r.title && <p className="font-medium mt-1">{r.title}</p>}
@@ -139,6 +150,34 @@ export default async function ProductPage({ params }: { params: { slug: string }
         }))}
       />
       <RelatedProducts productId={product.id} categoryId={product.categoryId} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.title,
+            description: product.description,
+            image: product.images.slice(0, 3),
+            sku: product.variants[0]?.sku,
+            offers: {
+              "@type": "Offer",
+              price: product.salePrice ? Number(product.salePrice) : Number(product.basePrice),
+              priceCurrency: product.currency,
+              availability: totalStock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            },
+            ...(publicReviews.length > 0
+              ? {
+                  aggregateRating: {
+                    "@type": "AggregateRating",
+                    ratingValue: avgRating.toFixed(1),
+                    reviewCount: publicReviews.length
+                  }
+                }
+              : {})
+          })
+        }}
+      />
     </>
   );
 }
