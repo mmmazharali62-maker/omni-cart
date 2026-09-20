@@ -1,16 +1,31 @@
 import { db } from "@/lib/db";
 import { GlassPanel } from "@/components/ui/glass-panel";
-import { PricingRulesPanel, CouponCreator } from "@/components/admin/promotions";
+import { PricingRuleEditor } from "@/components/admin/pricing-rule-editor";
+import { CouponCreator } from "@/components/admin/promotions";
 
-// Pricing rules + coupon management (spec section 10 + 19).
+// Pricing rules + coupon management (spec section 10 + 19) - now fully persisted.
 export default async function AdminPricingPage() {
-  const coupons = await db.coupon.findMany({ orderBy: { createdAt: "desc" } }).catch(() => []);
+  const [rules, coupons] = await Promise.all([
+    db.pricingRule.findMany({ orderBy: [{ priority: "desc" }, { createdAt: "desc" }] }).catch(() => []),
+    db.coupon.findMany({ orderBy: { createdAt: "desc" } }).catch(() => [])
+  ]);
 
   return (
     <section>
       <h1 className="text-2xl font-semibold mb-6">Pricing & Promotions</h1>
       <div className="grid lg:grid-cols-2 gap-6">
-        <PricingRulesPanel />
+        <GlassPanel>
+          <h2 className="text-sm font-medium mb-4">Automatic Pricing Rules</h2>
+          <p className="text-white/50 text-xs mb-4">
+            Applied at import + sync time: supplier &gt; category &gt; default scope.
+          </p>
+          <PricingRuleEditor
+            initialRules={rules.map((r) => ({
+              id: r.id, name: r.name, type: r.type, value: String(r.value),
+              categoryId: r.categoryId, supplierId: r.supplierId, roundTo: r.roundTo, priority: r.priority
+            }))}
+          />
+        </GlassPanel>
         <GlassPanel>
           <h2 className="text-sm font-medium mb-4">Create Coupon</h2>
           <CouponCreator />
