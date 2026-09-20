@@ -14,6 +14,11 @@ const links = [
   ["Analytics", "/admin/analytics"],
   ["Settings", "/admin/settings"],
   ["Integrations", "/admin/integrations"],
+  ["Import", "/admin/import"],
+  ["Supplier Health", "/admin/supplier-health"],
+  ["Fraud", "/admin/fraud"],
+  ["Digest", "/admin/digest"],
+  ["Exports", "/admin/exports"],
   ["Audit Log", "/admin/audit"],
   ["Support", "/admin/support"]
 ];

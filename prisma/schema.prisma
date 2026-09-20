@@ -322,6 +322,35 @@ model AuditLog {
   createdAt DateTime @default(now())
 }
 
+// Gift cards (spec section 15/16): code-based, partially redeemable.
+model GiftCard {
+  id               String    @id @default(cuid())
+  code             String    @unique
+  initialCents     Int
+  remainingCents    Int
+  currency         String    @default("USD")
+  isActive         Boolean   @default(true)
+  purchasedByUserId String?
+  note             String?
+  expiresAt        DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+// Fraud review queue (spec section 17): scores from src/lib/fraud/checks.ts.
+model FraudFlag {
+  id         String    @id @default(cuid())
+  orderId    String
+  score      Int
+  action     String    // allow | review | hold
+  flags      Json
+  status     String    @default("open") // open | cleared | cancelled
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
 // Return requests (spec section 29): 30-day policy, admin-approved.
 model ReturnRequest {
   id           String   @id @default(cuid())
