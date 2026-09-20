@@ -1,12 +1,61 @@
-// Product Management.
-// Create/edit/archive products, bulk import, categories, variants, images, pricing, inventory, SEO, supplier mapping (spec section 15).
-// TODO: replace this placeholder with real data + UI.
+import Link from "next/link";
+import { db } from "@/lib/db";
+import { GlassPanel } from "@/components/ui/glass-panel";
+import { Button } from "@/components/ui/button";
+import { formatMoney } from "@/lib/utils";
 
-export default function AdminProductManagementPage() {
+// Admin Product Management (spec section 15).
+export default async function AdminProductsPage() {
+  const products = await db.product
+    .findMany({
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      include: { variants: true, category: true, supplierLinks: { include: { supplier: true } } }
+    })
+    .catch(() => []);
+
   return (
-    <section className="glass p-8 min-h-[40vh]">
-      <h1 className="text-2xl font-semibold">Product Management</h1>
-      <p className="text-white/60 mt-2">Create/edit/archive products, bulk import, categories, variants, images, pricing, inventory, SEO, supplier mapping (spec section 15).</p>
+    <section>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">Products</h1>
+        <Link href="/admin/products/import"><Button variant="primary">Import Product</Button></Link>
+      </div>
+      <GlassPanel>
+        {products.length === 0 ? (
+          <p className="text-white/50 text-sm py-4">
+            No products yet. Use “Import Product” to pull your first CJ Dropshipping or AliExpress item.
+          </p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="text-white/50 text-xs">
+              <tr>
+                <th className="text-left py-2">Title</th>
+                <th className="text-left">Category</th>
+                <th className="text-left">Supplier</th>
+                <th className="text-left">Price</th>
+                <th className="text-left">Stock</th>
+                <th className="text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((p) => {
+                const stock = p.variants.reduce((s, v) => s + v.stock, 0);
+                return (
+                  <tr key={p.id} className="border-t border-white/10">
+                    <td className="py-3 max-w-[240px] truncate">{p.title}</td>
+                    <td className="text-white/70">{p.category?.name ?? "—"}</td>
+                    <td className="text-white/70">{p.supplierLinks[0]?.supplier.displayName ?? "manual"}</td>
+                    <td>{formatMoney(Number(p.salePrice ?? p.basePrice), p.currency)}</td>
+                    <td className={stock <= 5 ? "text-amber-400" : ""}>{stock}</td>
+                    <td><span className="px-2 py-1 rounded-full text-xs bg-white/10 text-white/70">{p.status}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </GlassPanel>
+      {/* TODO: create/edit/delete/archive + bulk import UI */}
     </section>
   );
 }
