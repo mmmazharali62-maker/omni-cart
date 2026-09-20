@@ -51,12 +51,15 @@ legally/contractually supported).
 - [x] Background jobs + Vercel cron (sync/tracking/retry) secured with CRON_SECRET
 - [x] Admin dashboard: live stats + charts; orders/products/suppliers management
 - [x] SEO: sitemap, robots, schema.org structured data
-- [ ] Auth UI (sign-in/sign-up pages) - NextAuth backend is ready
+- [x] Auth UI: sign-in/sign-up pages, registration API (bcrypt), NextAuth verification wired
 - [ ] Real supplier API calls (needs CJ/AliExpress credentials + app approval)
 - [ ] Real payment + refund execution (needs Stripe keys)
 - [ ] Email/SMS provider connection (templates ready)
 - [ ] AI provider connection (stubs ready)
-- [ ] Product create/edit + bulk import UI in admin
+- [x] Admin product create form + CRUD APIs (soft-archive delete)
+- [x] Coupon management (percentage/fixed/free-ship, limits, windows)
+- [x] Deals / New Arrivals / Best Sellers / Inventory pages wired to real data
+- [ ] Pricing-rule editor UI (engine is live + tested)
 - [ ] E2E tests + responsive polish
 
 ## What's intentionally still a TODO

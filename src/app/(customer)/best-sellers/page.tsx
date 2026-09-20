@@ -1,12 +1,50 @@
-// Best Sellers page.
-// Ranked by historical order volume once analytics exist.
-// TODO: replace this placeholder with the real UI + data fetching.
+import { db } from "@/lib/db";
+import { ProductCard } from "@/components/product/product-card";
 
-export default function BestSellersPage() {
+// Best sellers ranked by actual units sold (spec section 1/22).
+export default async function BestSellersPage() {
+  const top = await db.orderItem
+    .groupBy({
+      by: ["productId"],
+      _sum: { quantity: true },
+      orderBy: { _sum: { quantity: "desc" } },
+      take: 12
+    })
+    .catch(() => []);
+
+  const products = top.length
+    ? await db.product
+        .findMany({
+          where: { id: { in: top.map((t) => t.productId) }, status: "active" }
+        })
+        .then((prods) => {
+          const rank = new Map(top.map((t) => [t.productId, t._sum.quantity ?? 0]));
+          return prods.sort((a, b) => (rank.get(b.id) ?? 0) - (rank.get(a.id) ?? 0));
+        })
+        .catch(() => [])
+    : [];
+
   return (
-    <section className="mx-4 mt-12 min-h-[40vh]">
-      <h1 className="text-2xl font-semibold">Best Sellers</h1>
-      <p className="text-white/60 mt-2">Ranked by historical order volume once analytics exist.</p>
+    <section className="mx-4 mt-12">
+      <h1 className="text-2xl font-semibold mb-6">Best Sellers</h1>
+      {products.length === 0 ? (
+        <p className="text-white/50 text-sm">Sales rankings appear here once orders start coming in.</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {products.map((p) => (
+            <ProductCard
+              key={p.id}
+              product={{
+                slug: p.slug,
+                title: p.title,
+                image: p.images[0] ?? "",
+                price: Number(p.basePrice),
+                salePrice: p.salePrice ? Number(p.salePrice) : undefined
+              }}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
