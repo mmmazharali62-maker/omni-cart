@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewsletterForm } from "@/components/layout/newsletter-form";
 
 const columns = [
   { title: "Shop", links: [["Shop", "/shop"], ["Deals", "/deals"], ["New Arrivals", "/new-arrivals"], ["Best Sellers", "/best-sellers"]] },
@@ -26,6 +27,7 @@ export function Footer() {
         ))}
       </div>
       <p className="mt-10 text-white/40">© {new Date().getFullYear()} Omni Cart. All rights reserved.</p>
+          <NewsletterForm />
     </footer>
   );
 }
