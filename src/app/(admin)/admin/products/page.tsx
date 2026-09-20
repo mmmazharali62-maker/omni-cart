@@ -45,7 +45,7 @@ export default async function AdminProductsPage() {
                 const stock = p.variants.reduce((s, v) => s + v.stock, 0);
                 return (
                   <tr key={p.id} className="border-t border-white/10">
-                    <td className="py-3 max-w-[240px] truncate">{p.title}</td>
+                    <td className="py-3 max-w-[240px] truncate"><Link href={`/admin/products/${p.id}`} className="hover:text-brand-400">{p.title}</Link></td>
                     <td className="text-white/70">{p.category?.name ?? "—"}</td>
                     <td className="text-white/70">{p.supplierLinks[0]?.supplier.displayName ?? "manual"}</td>
                     <td>{formatMoney(Number(p.salePrice ?? p.basePrice), p.currency)}</td>
