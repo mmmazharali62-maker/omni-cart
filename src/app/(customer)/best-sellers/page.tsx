@@ -48,3 +48,6 @@ export default async function BestSellersPage() {
     </section>
   );
 }
+
+// ISR: refresh public catalog pages every 5 minutes (spec section 2).
+export const revalidate = 300;
