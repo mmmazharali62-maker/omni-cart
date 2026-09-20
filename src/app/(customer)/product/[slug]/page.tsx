@@ -6,6 +6,7 @@ import { FeaturedProductsSection } from "@/components/home/featured-products";
 import { formatMoney } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { RecentlyViewedTracker } from "@/components/product/recently-viewed";
+import { WishlistButton } from "@/components/product/wishlist-button";
 
 // Product detail page (spec section 3).
 export default async function ProductPage({ params }: { params: { slug: string } }) {
@@ -75,7 +76,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <div className="mt-6 flex gap-3">
               <Button variant="primary" disabled={totalStock === 0}>Add to Cart</Button>
               <Button variant="glass" disabled={totalStock === 0}>Buy Now</Button>
-              <Button variant="ghost">♡ Wishlist</Button>
+              <WishlistButton productId={product.id} />
             </div>
           </GlassPanel>
 

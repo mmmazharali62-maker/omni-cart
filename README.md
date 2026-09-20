@@ -62,13 +62,16 @@ legally/contractually supported).
 - [x] Pricing-rule editor UI + persistence (Prisma PricingRule, CRUD API)
 - [x] Order-retry job (max 3 spaced retries, audit-counted)
 - [x] Admin settings (integration status, role matrix) + customers page (LTV)
-- [ ] E2E tests + responsive polish
+- [x] Recently-viewed homepage rail (localStorage + ordered hydration)
+- [x] Guest order lookup (no account needed)
+- [ ] E2E tests (Playwright) + responsive visual polish
+- [ ] Real supplier/payment/email/AI provider calls (awaiting credentials)
 - [ ] Category/variant pickers in admin forms (currently free-text IDs)
 - [x] Review moderation queue (approve/hide/delete, audit-logged)
 - [x] Category API + dropdown picker with inline creation
 - [x] Recently-viewed product tracking
 - [x] GitHub Actions CI (prisma generate + vitest)
-- [ ] Full variant management UI in admin (variants via import only for now)
+- [x] Full variant management UI in admin (add, stock override, delete guards)
 
 ## What's intentionally still a TODO
 
