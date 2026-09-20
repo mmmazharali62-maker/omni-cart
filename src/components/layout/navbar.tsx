@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { GlassPanel } from "@/components/ui/glass-panel";
 
 // Consistent Liquid Glass navigation across the whole site (spec section 1).
@@ -32,6 +33,7 @@ export function Navbar() {
           <Link href="/account" aria-label="Account">Account</Link>
         </div>
       </GlassPanel>
+          <MobileNav />
     </header>
   );
 }

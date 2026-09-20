@@ -64,7 +64,8 @@ legally/contractually supported).
 - [x] Admin settings (integration status, role matrix) + customers page (LTV)
 - [x] Recently-viewed homepage rail (localStorage + ordered hydration)
 - [x] Guest order lookup (no account needed)
-- [ ] E2E tests (Playwright) + responsive visual polish
+- [x] Playwright E2E suite (customer + admin flows, desktop + mobile)
+- [x] Responsive: mobile hamburger nav, loading skeletons, 404/error pages
 - [ ] Real supplier/payment/email/AI provider calls (awaiting credentials)
 - [ ] Category/variant pickers in admin forms (currently free-text IDs)
 - [x] Review moderation queue (approve/hide/delete, audit-logged)
