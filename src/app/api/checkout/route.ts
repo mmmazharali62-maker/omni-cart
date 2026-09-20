@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
         quantity: l.quantity
       })),
       metadata: { orderId: order.id },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/account/orders/${order.id}?paid=1`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/checkout/success?order=${order.id}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/cart`
     });
 

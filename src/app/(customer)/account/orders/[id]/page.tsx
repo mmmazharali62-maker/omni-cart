@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { GlassPanel } from "@/components/ui/glass-panel";
+import { ReturnRequestButton } from "@/components/account/return-request";
 import { formatMoney } from "@/lib/utils";
 
 // Order details + tracking timeline for the customer (spec section 6/12).
@@ -72,6 +73,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           <p className="flex justify-between font-semibold text-base pt-2"><span>Total</span><span>{formatMoney(Number(order.grandTotal), order.currency)}</span></p>
         </div>
       </GlassPanel>
+      <ReturnRequestButton orderId={order.id} delivered={order.status === "DELIVERED"} />
     </section>
   );
 }
