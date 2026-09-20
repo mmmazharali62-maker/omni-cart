@@ -47,9 +47,24 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       }
     });
 
+    // Refund: execute via Stripe BEFORE marking the order refunded.
+    if (to === "REFUNDED") {
+      const stripe = process.env.STRIPE_SECRET_KEY
+        ? new (await import("stripe")).default(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
+        : null;
+      if (stripe) {
+        const payment = await db.payment.findFirst({ where: { orderId: order.id, status: "succeeded" } });
+        if (payment?.providerRefId) {
+          await stripe.refunds.create({ payment_intent: payment.providerRefId }).catch((e) => {
+            throw new Error(`Stripe refund failed: ${e.message}`);
+          });
+        }
+      } else {
+        return NextResponse.json({ error: "Stripe not configured - cannot refund" }, { status: 503 });
+      }
+      await sendEmailNotification("refund", order.user?.email ?? order.guestEmail ?? "", { orderId: order.id });
+    }
     if (to === "CANCELLED") await sendEmailNotification("cancellation", order.user?.email ?? order.guestEmail ?? "", { orderId: order.id });
-    if (to === "REFUNDED") await sendEmailNotification("refund", order.user?.email ?? order.guestEmail ?? "", { orderId: order.id });
-    // TODO refund: call Stripe refund API before transitioning.
 
     return NextResponse.json({ ok: true, status: to });
   } catch (err) {

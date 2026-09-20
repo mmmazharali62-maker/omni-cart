@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { CartBadge } from "@/components/layout/cart-badge";
 import { GlassPanel } from "@/components/ui/glass-panel";
 
 // Consistent Liquid Glass navigation across the whole site (spec section 1).
@@ -34,6 +35,7 @@ export function Navbar() {
         </div>
       </GlassPanel>
           <MobileNav />
+          <CartBadge />
     </header>
   );
 }
