@@ -366,6 +366,66 @@ model ReturnRequest {
   updatedAt    DateTime @updatedAt
 }
 
+// Referral program (spec section 15): invite codes, reward on first order.
+model Referral {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  referrerId  String
+  refereeEmail String?
+  status      String   @default("pending") // pending | rewarded | expired
+  rewardCents Int      @default(500)
+  orderId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Product Q&A (spec section 7): customer questions, admin answers.
+model QaQuestion {
+  id         String    @id @default(cuid())
+  productId  String
+  userId     String?
+  askerEmail String
+  question   String
+  answer     String?
+  answeredBy String?
+  isPublished Boolean  @default(false)
+  helpfulCount Int     @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// Back-in-stock alerts (spec section 15): notify when a variant restocks.
+model BackInStockAlert {
+  id        String   @id @default(cuid())
+  variantId String
+  email     String
+  notifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([variantId, email])
+}
+
+// Price snapshots (spec section 10/12): price-drop detection + charts.
+model PriceSnapshot {
+  id        String   @id @default(cuid())
+  productId String
+  price     Decimal  @db.Decimal(10, 2)
+  capturedAt DateTime @default(now())
+}
+
+// Supplier payouts (spec section 11): COGS owed per fulfilled shipment.
+model SupplierPayout {
+  id          String    @id @default(cuid())
+  supplierId  String
+  shipmentId  String?
+  amountCents Int
+  currency    String    @default("USD")
+  status      String    @default("due") // due | paid | disputed
+  paidAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 // Integration credentials (spec section 17): stored encrypted at rest.
 // Lets the owner enable each provider later from the admin UI without a redeploy.
 model IntegrationSetting {
