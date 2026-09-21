@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     shortName: STORE.name,
     themeColor: "#7c3aed",
     backgroundColor: "#0b0b12",
-    baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart.example.com"
+    baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart1.netlify.app"
   });
   return manifest as unknown as MetadataRoute.Manifest;
 }

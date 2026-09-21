@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 
 // Dynamic sitemap (spec section 23): static routes + all active products/categories.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart.example.com";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart1.netlify.app";
   const statics: MetadataRoute.Sitemap = ["", "/shop", "/deals", "/new-arrivals", "/best-sellers", "/help"].map(
     (p) => ({ url: `${base}${p}`, changeFrequency: "daily" as const, priority: p === "" ? 1 : 0.7 })
   );

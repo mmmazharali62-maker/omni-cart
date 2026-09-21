@@ -9,7 +9,7 @@ export type TemplateData = {
   reason?: string;
 };
 
-const store = { name: "Omni Cart", url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart.example.com" };
+const store = { name: "Omni Cart", url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://omnicart1.netlify.app" };
 
 export const templates: Record<string, { subject: string; body: (d: TemplateData) => string }> = {
   order_received: {
