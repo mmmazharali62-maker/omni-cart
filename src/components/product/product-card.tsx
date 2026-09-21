@@ -19,7 +19,14 @@ export function ProductCard({ product }: { product: ProductCardData }) {
     <Link href={`/product/${product.slug}`}>
       <GlassPanel className="p-0 overflow-hidden">
         <div className="relative aspect-square">
-          <Image src={product.image} alt={product.title} fill className="object-cover" />
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            quality={75}
+            className="object-cover"
+          />
           {lowStock && (
             <span className="absolute top-2 left-2 text-xs bg-destructive text-white px-2 py-1 rounded-full">
               Only {product.stock} left
