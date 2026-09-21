@@ -3,7 +3,7 @@
 # keeps local `netlify dev` and CI on the same runtime.
 
 [build]
-  command = "npm run build"
+  command = "npx prisma generate && npm run build"
   publish = ".next"
 
 [build.environment]

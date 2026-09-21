@@ -4,6 +4,7 @@
   "private": true,
   "description": "Omni Cart - Liquid Glass 3D dropshipping ecommerce platform (UK/USA) with CJ Dropshipping, AliExpress and Amazon sourcing integrations.",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
