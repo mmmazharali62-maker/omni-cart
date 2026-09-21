@@ -14,7 +14,7 @@ const BUNDLES = [
 
 export default async function BundlesPage() {
   const products = await db.product.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: "active" },
     select: { title: true, basePrice: true },
     take: 100
   }).catch(() => []);
@@ -49,3 +49,6 @@ export default async function BundlesPage() {
     </section>
   );
 }
+
+// ISR: refresh catalog data every 5 minutes.
+export const revalidate = 300;

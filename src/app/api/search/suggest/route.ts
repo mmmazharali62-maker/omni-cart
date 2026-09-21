@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (cached) return NextResponse.json({ suggestions: cached });
 
   const products = await db.product.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: "active" },
     select: { title: true },
     take: 500
   }).catch(() => []);

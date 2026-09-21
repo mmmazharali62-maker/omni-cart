@@ -1,4 +1,8 @@
 import { Hero } from "@/components/home/hero";
+import { AnnouncementMarquee } from "@/components/common/announcement-marquee";
+import { PromoBanner } from "@/components/common/promo-banner";
+import { ReferralBanner } from "@/components/marketing/referral-banner";
+import { RevealOnScroll } from "@/components/common/reveal-on-scroll";
 import { FeaturedProductsSection } from "@/components/home/featured-products";
 import { db } from "@/lib/db";
 import { RecentlyViewedRail } from "@/components/home/recently-viewed-rail";
@@ -44,13 +48,27 @@ export default async function HomePage() {
 
   return (
     <>
+      <AnnouncementMarquee messages={[
+        "Free shipping on US orders over $50",
+        "UK orders over \u00A340 ship free",
+        "30-day no-questions returns",
+        "Live tracking on every order"
+      ]} />
       <Hero />
+      <div className="mx-4">
+        <PromoBanner market="US" />
+      </div>
       <FeaturedProductsSection title="Featured Products" products={cards} />
       <FeaturedProductsSection title="Trending Now" products={cards.slice(0, 4)} />
       <FeaturedProductsSection title="New Arrivals" products={newArrivals} />
       <FeaturedProductsSection title="Flash Deals" products={deals} />
       <FeaturedProductsSection title="Best Sellers" products={bestSellers} />
       <RecentlyViewedRail />
+      <RevealOnScroll>
+        <div className="mx-4 mb-8">
+          <ReferralBanner />
+        </div>
+      </RevealOnScroll>
     </>
   );
 }

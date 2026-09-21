@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   if (cached) return NextResponse.json({ facets: cached });
 
   const products = await db.product.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: "active" },
     select: { categoryId: true, basePrice: true, salePrice: true }
   }).catch(() => []);
 

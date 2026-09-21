@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const cartCategorySlugs = cartProducts.map((p) => p.categoryId).filter(Boolean) as string[];
 
   const candidatesRaw = await db.product.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: "active" },
     select: { id: true, title: true, basePrice: true, categoryId: true },
     take: 200
   }).catch(() => []);

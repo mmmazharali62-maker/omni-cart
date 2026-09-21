@@ -2,9 +2,10 @@ import Link from "next/link";
 import { NewsletterForm } from "@/components/layout/newsletter-form";
 
 const columns = [
-  { title: "Shop", links: [["Shop", "/shop"], ["Deals", "/deals"], ["New Arrivals", "/new-arrivals"], ["Best Sellers", "/best-sellers"]] },
-  { title: "Account", links: [["Orders", "/account/orders"], ["Wishlist", "/account/wishlist"], ["Addresses", "/account/addresses"]] },
-  { title: "Support", links: [["Help/Support", "/help"], ["Track Order", "/account/orders"]] }
+  { title: "Shop", links: [["Shop", "/shop"], ["Deals", "/deals"], ["New Arrivals", "/new-arrivals"], ["Best Sellers", "/best-sellers"], ["Bundles", "/bundles"], ["Gift Cards", "/gift-cards"], ["Compare", "/compare"]] },
+  { title: "Account", links: [["Orders", "/account/orders"], ["Wishlist", "/account/wishlist"], ["Addresses", "/account/addresses"], ["Rewards", "/rewards"], ["Returns", "/returns"]] },
+  { title: "Support", links: [["Help/Support", "/help"], ["Track Order", "/track-order"], ["Contact", "/contact"], ["FAQ", "/faq"], ["Blog", "/blog"]] },
+  { title: "Company", links: [["About", "/about"], ["Accessibility", "/accessibility"], ["Privacy", "/privacy"], ["Terms", "/terms"], ["Refund Policy", "/refund-policy"], ["Shipping Policy", "/shipping-policy"]] }
 ];
 
 export function Footer() {

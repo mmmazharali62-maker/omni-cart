@@ -8,7 +8,12 @@ const links = [
   ["Categories", "/categories"],
   ["Deals", "/deals"],
   ["New", "/new-arrivals"],
-  ["Best Sellers", "/best-sellers"]
+  ["Best Sellers", "/best-sellers"],
+  ["Bundles", "/bundles"],
+  ["Blog", "/blog"],
+  ["Rewards", "/rewards"],
+  ["Gift Cards", "/gift-cards"],
+  ["Track Order", "/track-order"]
 ];
 
 export function MobileNav() {

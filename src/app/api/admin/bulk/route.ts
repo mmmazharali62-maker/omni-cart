@@ -18,10 +18,10 @@ export async function POST(req: NextRequest) {
     let affected = 0;
     switch (action.command) {
       case "activate":
-        affected = (await db.product.updateMany({ where: { id: { in: action.productIds } }, data: { status: "ACTIVE" } })).count;
+        affected = (await db.product.updateMany({ where: { id: { in: action.productIds } }, data: { status: "active" } })).count;
         break;
       case "deactivate":
-        affected = (await db.product.updateMany({ where: { id: { in: action.productIds } }, data: { status: "DRAFT" } })).count;
+        affected = (await db.product.updateMany({ where: { id: { in: action.productIds } }, data: { status: "draft" } })).count;
         break;
       case "delete":
         affected = (await db.product.deleteMany({ where: { id: { in: action.productIds } } })).count;

@@ -16,7 +16,7 @@ export default async function SharedWishlistPage({ params }: { params: { token: 
 
   const products = productIds.length
     ? await db.product.findMany({
-        where: { id: { in: productIds }, status: "ACTIVE" },
+        where: { id: { in: productIds }, status: "active" },
         select: { slug: true, title: true, images: true, basePrice: true }
       }).catch(() => [])
     : [];

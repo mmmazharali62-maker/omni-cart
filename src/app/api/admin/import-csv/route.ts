@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
           images: (row.image || row["image_src"] || "").split("|").filter(Boolean),
           basePrice: norm.price ?? 0,
           salePrice: norm.price ?? 0,
-          status: "DRAFT"
+          status: "draft"
         }
       }).catch(() => null);
       imported++;

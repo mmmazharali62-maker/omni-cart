@@ -19,7 +19,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     where: {
       categoryId: product.categoryId,
       id: { not: params.id },
-      status: "ACTIVE"
+      status: "active"
     },
     select: { id: true, slug: true, title: true, basePrice: true, salePrice: true, images: true },
     take: 8

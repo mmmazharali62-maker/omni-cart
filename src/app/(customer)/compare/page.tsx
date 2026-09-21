@@ -11,7 +11,7 @@ export default async function ComparePage({ searchParams }: { searchParams: { id
 
   const products = ids.length >= 2
     ? await db.product.findMany({
-        where: { id: { in: ids }, status: "ACTIVE" },
+        where: { id: { in: ids }, status: "active" },
         select: { id: true, slug: true, title: true, images: true, basePrice: true, salePrice: true, categoryId: true }
       }).catch(() => [])
     : [];

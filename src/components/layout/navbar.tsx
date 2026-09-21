@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { CartBadge } from "@/components/layout/cart-badge";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { GlassPanel } from "@/components/ui/glass-panel";
 
 // Consistent Liquid Glass navigation across the whole site (spec section 1).
@@ -10,7 +11,9 @@ const links = [
   { href: "/categories", label: "Categories" },
   { href: "/deals", label: "Deals" },
   { href: "/new-arrivals", label: "New Arrivals" },
-  { href: "/best-sellers", label: "Best Sellers" }
+  { href: "/best-sellers", label: "Best Sellers" },
+  { href: "/blog", label: "Blog" },
+  { href: "/rewards", label: "Rewards" }
 ];
 
 export function Navbar() {
@@ -32,6 +35,7 @@ export function Navbar() {
           <Link href="/wishlist" aria-label="Wishlist">Wishlist</Link>
           <Link href="/cart" aria-label="Cart">Cart</Link>
           <Link href="/account" aria-label="Account">Account</Link>
+          <ThemeToggle />
         </div>
       </GlassPanel>
           <MobileNav />
