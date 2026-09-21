@@ -1,0 +1,15 @@
+# Netlify deployment config for Omni Cart (Next.js 14).
+# Netlify auto-installs this plugin too, but pinning it in devDependencies
+# keeps local `netlify dev` and CI on the same runtime.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js runtime: SSR, API routes, middleware, and ISR all work out of the box.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
